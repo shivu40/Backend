@@ -7,7 +7,7 @@ const router = express.Router()
 router.get('/get', async (req, res) => {
         try {
                 const student = await Student.findOne({_id : req.query._id});       //Getting the data
-                const newData = removeIdAndV(student);                  //Removing Id and V from the document
+                const newData = removeIdAndV(student);                  //Removing _id and __V from the document
                 const response = {                                      //Creating a new response as mentioned in the assignment
                     message : "success",
                     data : newData
@@ -34,7 +34,7 @@ router.post('/create', async (req, res) => {
 
         try {
                 const result = await student.save();        //creating new document in the database.               
-                const newData = removeIdAndV(result);       //removing Id and V from the result.
+                const newData = removeIdAndV(result);       //removing _id and __v from the result.
                 const response = {                          //Creating a new response as mentioned in the assignment.
                     message : "success",
                     data : newData
@@ -60,7 +60,7 @@ router.post('/update', async(req, res) => {
         }
         if(Object.keys(additionalFields).length > 0 ){
 
-            //If we have to add any new field then updating the schena with the new fields 
+            //If we have to add any new field then updating the schema with the new fields 
             //and then after adding the new fields adding document to the database.
             //Using replace here because update was only updating the existing fields but was not adding the new fields.
             Student.schema.add(additionalFields);
@@ -77,19 +77,19 @@ router.post('/update', async(req, res) => {
         }else if(Object.keys(additionalFields).length === 0 ){
 
             //If the body of the request do not contain any new field then simply updating
-            //the existing fields values in the collection.
+            //the existing fields values in the document.
             await Student.updateOne({_id: req.body._id}, req.body);
         }
 
 
-        const updatedStudent = await Student.findOne({_id: req.body._id});
+        const updatedStudent = await Student.findOne({_id: req.body._id});      //Getting the updated data
 
-        const response = {
+        const response = {                                                      //Preparing Response.
             message : "success",
             data : removeIdAndV(updatedStudent)
         }  
         
-        res.json(response);
+        res.json(response);                                                     //Sending response.
         
         
     } catch (error) {
